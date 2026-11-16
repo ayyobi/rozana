@@ -1,0 +1,35 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '@/components/layout/Sidebar.astro';
+import BottomNav from '@/components/layout/BottomNav.astro';
+import QuickAdd from '@/components/layout/QuickAdd';
+import Toaster from '@/components/ui/Toaster';
+import { useTranslations } from '@/i18n';
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
+---
+
+<BaseLayout title={title}>
+  <a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[70] focus:rounded-pill focus:bg-surface focus:px-4 focus:py-2">
+    {locale === 'fa' ? 'رفتن به محتوا' : 'Aller au contenu'}
+  </a>
+  <div class="flex min-h-dvh">
+    <Sidebar />
+    <main
+      id="contenu"
+      class="min-w-0 flex-1 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[calc(env(safe-area-inset-bottom)+7rem)] sm:px-6 lg:px-10 lg:pt-8 lg:pb-12"
+    >
+      <div class="mx-auto w-full max-w-7xl">
+        <slot />
+      </div>
+    </main>
+  </div>
+  <BottomNav />
+  <QuickAdd client:idle locale={locale} />
+  <Toaster client:idle dismissLabel={t('toast.dismiss')} />
+</BaseLayout>

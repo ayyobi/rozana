@@ -1,0 +1,7 @@
+---
+import ComingSoon from '@/components/layout/ComingSoon.astro';
+import { useTranslations } from '@/i18n';
+const t = useTranslations(Astro.locals.locale);
+---
+
+<ComingSoon title={t('pages.projects')} phase={3} />

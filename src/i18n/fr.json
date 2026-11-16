@@ -1,0 +1,190 @@
+{
+  "app": {
+    "name": "Rozana",
+    "nameFa": "روزانه",
+    "tagline": "Chaque jour, à ton rythme."
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "dashboard": "Accueil",
+    "planning": "Planning",
+    "tasks": "Tâches",
+    "projects": "Projets",
+    "habits": "Habitudes",
+    "finances": "Finances",
+    "stats": "Statistiques",
+    "assistant": "Assistant",
+    "settings": "Paramètres",
+    "more": "Plus",
+    "logout": "Se déconnecter"
+  },
+  "greeting": {
+    "morning": "Bonjour",
+    "afternoon": "Bon après-midi",
+    "evening": "Bonsoir",
+    "subtitle": "Voici ce qui t'attend aujourd'hui."
+  },
+  "quotes": [
+    "Un petit pas aujourd'hui compte vraiment.",
+    "Avance doucement, mais avance.",
+    "Ta journée t'appartient.",
+    "Le repos fait aussi partie du chemin.",
+    "Fais de ton mieux, c'est déjà beaucoup."
+  ],
+  "header": {
+    "notifications": "Notifications",
+    "noNotifications": "Aucune notification pour le moment.",
+    "profile": "Profil",
+    "today": "Aujourd'hui"
+  },
+  "widgets": {
+    "priorities": {
+      "title": "Mes priorités",
+      "empty": "Aucune priorité pour aujourd'hui.",
+      "emptyHint": "Ajoute une tâche importante pour la voir ici."
+    },
+    "planning": {
+      "title": "Mon planning",
+      "empty": "Journée libre pour l'instant.",
+      "emptyHint": "Tes événements du jour apparaîtront ici."
+    },
+    "projects": {
+      "title": "Mes projets",
+      "empty": "Aucun projet en cours.",
+      "emptyHint": "Crée un projet pour suivre sa progression.",
+      "count": "{done}/{total} tâches",
+      "deadline": "échéance {date}"
+    },
+    "habits": {
+      "title": "Mes habitudes",
+      "empty": "Aucune habitude prévue aujourd'hui.",
+      "emptyHint": "Commence par une petite habitude facile."
+    },
+    "finances": {
+      "title": "Mes finances",
+      "income": "Revenus du mois",
+      "expenses": "Dépenses du mois",
+      "budgetLeft": "Budget restant",
+      "savings": "Épargne",
+      "nextDue": "Prochaine échéance",
+      "noData": "—",
+      "emptyHint": "Saisis ta première transaction pour voir ton mois."
+    },
+    "calendar": {
+      "title": "Calendrier",
+      "prev": "Mois précédent",
+      "next": "Mois suivant"
+    },
+    "customize": "Personnaliser",
+    "seeAll": "Tout voir"
+  },
+  "quickAdd": {
+    "open": "Ajout rapide",
+    "close": "Fermer l'ajout rapide",
+    "title": "Ajouter…",
+    "task": "Nouvelle tâche",
+    "event": "Nouvel événement",
+    "project": "Nouveau projet",
+    "expense": "Nouvelle dépense",
+    "income": "Nouveau revenu",
+    "habit": "Nouvelle habitude",
+    "savings": "Objectif d'épargne",
+    "availableIn": "Disponible en phase {phase}"
+  },
+  "auth": {
+    "title": "Connexion",
+    "welcome": "Content de te revoir",
+    "subtitle": "Connecte-toi à ton espace personnel.",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "invalid": "E-mail ou mot de passe incorrect.",
+    "unavailable": "Le serveur de données est injoignable. Réessaie dans un instant.",
+    "tooMany": "Trop de tentatives. Patiente quelques minutes.",
+    "expired": "Ta session a expiré. Reconnecte-toi.",
+    "loggedOut": "Déconnexion réussie. À bientôt.",
+    "private": "Espace privé — aucune inscription publique.",
+    "signupLink": "Première utilisation ? Crée ton compte",
+    "signupTitle": "Créer ton compte",
+    "signupSubtitle": "Ce sera le seul compte de Rozana. L’inscription se fermera juste après.",
+    "name": "Prénom (facultatif)",
+    "passwordConfirm": "Confirme le mot de passe",
+    "passwordHint": "10 caractères minimum.",
+    "signupSubmit": "Créer mon compte",
+    "signupSubmitting": "Création…",
+    "signupClosed": "L’inscription est fermée : un compte existe déjà. Connecte-toi.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 10 caractères.",
+    "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
+    "emailTaken": "Cette adresse ne peut pas être utilisée.",
+    "signupInvalid": "Vérifie les champs du formulaire.",
+    "haveAccount": "J’ai déjà un compte",
+    "pbDown": "PocketBase ne répond pas. Lance-le dans un terminal à la racine du projet : npm run pb"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "error": "Une erreur est survenue.",
+    "retry": "Réessayer",
+    "comingSoon": "En construction",
+    "comingSoonText": "Cette section sera développée en phase {phase}. Rien n'est simulé ici : elle s'activera avec de vraies données.",
+    "backToDashboard": "Retour à l'accueil"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "languageHint": "La langue de l'interface. Tes propres textes ne sont jamais traduits.",
+    "fr": "Français",
+    "fa": "فارسی (Persan / Dari)",
+    "timezone": "Fuseau horaire",
+    "timezoneHint": "Utilisé pour le planning et les rappels.",
+    "saved": "Préférence enregistrée",
+    "savedLocally": "Préférence appliquée sur cet appareil (sera synchronisée avec ton compte en phase 2)."
+  },
+  "toast": {
+    "dismiss": "Fermer la notification"
+  },
+  "pages": {
+    "planning": "Planning",
+    "tasks": "Tâches",
+    "projects": "Projets",
+    "habits": "Habitudes",
+    "finances": "Finances",
+    "stats": "Statistiques",
+    "assistant": "Assistant",
+    "settings": "Paramètres"
+  },
+  "priority": {
+    "low": "Basse",
+    "normal": "Normale",
+    "high": "Haute",
+    "urgent": "Urgente"
+  },
+  "agenda": {
+    "task": "Tâche",
+    "event": "Événement",
+    "allDay": "Journée entière"
+  },
+  "preview": {
+    "banner": "Aperçu du design — données d’exemple, rien n’est enregistré.",
+    "exit": "Quitter l’aperçu",
+    "enter": "Voir un aperçu du design"
+  },
+  "subnav": {
+    "day": "Jour",
+    "week": "Semaine",
+    "month": "Mois",
+    "overview": "Vue d’ensemble",
+    "transactions": "Transactions",
+    "budgets": "Budgets",
+    "recurring": "Récurrences",
+    "savings": "Épargne",
+    "transfers": "Transferts",
+    "reports": "Bilans"
+  }
+}

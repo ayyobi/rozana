@@ -1,0 +1,9 @@
+---
+import ComingSoon from '@/components/layout/ComingSoon.astro';
+import { getDictionary, useTranslations } from '@/i18n';
+const t = useTranslations(Astro.locals.locale);
+const L = getDictionary(Astro.locals.locale).subnav;
+const tabs = [{ href: '/planning/jour', label: L.day }, { href: '/planning/semaine', label: L.week }, { href: '/planning/mois', label: L.month }];
+---
+
+<ComingSoon title={t('pages.planning')} phase={3} tabs={tabs} />

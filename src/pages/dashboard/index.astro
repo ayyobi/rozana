@@ -1,0 +1,52 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import DashboardHeader from '@/components/dashboard/DashboardHeader.astro';
+import Dashboard from '@/components/dashboard/Dashboard';
+import { useTranslations } from '@/i18n';
+import { DEFAULT_TIMEZONE, nowIn } from '@/lib/utils/dates';
+import { EMPTY_DASHBOARD } from '@/types/dashboard';
+import { previewDashboard } from '@/lib/preview/sample';
+import { format } from 'date-fns';
+import { Eye, X } from 'lucide-react';
+
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
+// Phase 2 : le fuseau viendra de user_settings.
+const timeZone = DEFAULT_TIMEZONE;
+const now = nowIn(timeZone);
+const todayIso = format(now, 'yyyy-MM-dd');
+
+// Phase 1 : aucune donnée métier n'existe encore → états vides réels.
+// `?apercu=1` affiche une maquette clairement signalée (voir src/lib/preview/sample.ts).
+const preview = Astro.url.searchParams.get('apercu') === '1';
+const data = preview ? previewDashboard(todayIso) : EMPTY_DASHBOARD;
+---
+
+<AppLayout title={t('nav.dashboard')}>
+  {
+    preview && (
+      <div role="status" class="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-coral-strong/60 bg-apricot-soft px-4 py-2.5 text-sm">
+        <span class="flex items-center gap-2 font-medium">
+          <Eye className="size-4 shrink-0" aria-hidden="true" />
+          {t('preview.banner')}
+        </span>
+        <a href="/dashboard" class="inline-flex shrink-0 items-center gap-1 rounded-pill px-2 py-1 font-medium text-coral-strong hover:bg-white/50">
+          <X className="size-4" aria-hidden="true" />
+          {t('preview.exit')}
+        </a>
+      </div>
+    )
+  }
+  <DashboardHeader now={now} timeZone={timeZone} />
+  <Dashboard client:load locale={locale} data={data} todayIso={todayIso} timeZone={timeZone} preview={preview} />
+  {
+    !preview && (
+      <p class="mt-6 text-center">
+        <a href="/dashboard?apercu=1" class="inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-sm font-medium text-ink hover:bg-surface/60">
+          <Eye className="size-4" aria-hidden="true" />
+          {t('preview.enter')}
+        </a>
+      </p>
+    )
+  }
+</AppLayout>

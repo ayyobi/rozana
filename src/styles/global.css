@@ -1,0 +1,167 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/vazirmatn';
+
+/* ───────────────────────────────────────────────
+   Rozana — Design system
+   Palette officielle + variantes renforcées (WCAG AA)
+   ─────────────────────────────────────────────── */
+:root {
+  /* Palette Rozana — version neutre et chaleureuse (lin, sable, terracotta, sauge).
+     Les noms historiques (coral, peach…) sont conservés pour ne rien casser. */
+  --color-background: #eee7dd; /* lin */
+  --color-surface: #fbf8f3; /* crème claire */
+  --color-peach: #ead3bf; /* sable */
+  --color-coral: #d9a47f; /* terracotta doux (accent) */
+  --color-apricot: #e7d29e; /* ocre clair */
+  --color-text: #2f2925; /* espresso */
+  --color-text-secondary: #6b6058;
+  --color-border: #e2d8cb;
+  --color-white: #ffffff;
+
+  /* Variantes d'accessibilité (contrastes vérifiés)
+     text sur background : 11,7:1 · text sur coral : 6,5:1
+     text-secondary sur surface : 5,8:1 · sur background : 5,0:1
+     coral-strong sur surface : 5,5:1 · blanc sur coral-strong : 5,9:1 */
+  --color-text-muted: #5e544d;
+  --color-coral-strong: #9c4f31;
+  --color-coral-soft: #f2e1d3;
+  --color-peach-soft: #f4e9dd;
+  --color-apricot-soft: #f3ebd4;
+  --color-sage: #c6d3bd;
+  --color-sage-strong: #4b6542;
+  --color-danger: #a33b36;
+  --color-surface-2: #f3ece2;
+}
+
+@theme inline {
+  --color-bg: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-peach: var(--color-peach);
+  --color-peach-soft: var(--color-peach-soft);
+  --color-coral: var(--color-coral);
+  --color-coral-soft: var(--color-coral-soft);
+  --color-coral-strong: var(--color-coral-strong);
+  --color-apricot: var(--color-apricot);
+  --color-apricot-soft: var(--color-apricot-soft);
+  --color-sage: var(--color-sage);
+  --color-sage-strong: var(--color-sage-strong);
+  --color-ink: var(--color-text);
+  --color-ink-2: var(--color-text-secondary);
+  --color-ink-muted: var(--color-text-muted);
+  --color-line: var(--color-border);
+  --color-danger: var(--color-danger);
+}
+
+@theme {
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-sans: 'DM Sans Variable', 'DM Sans', system-ui, sans-serif;
+  --font-fa: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+
+  --radius-card: 16px;
+  --radius-field: 12px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 1px 2px rgb(47 41 37 / 0.04), 0 4px 16px -4px rgb(47 41 37 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(47 41 37 / 0.05), 0 12px 32px -8px rgb(47 41 37 / 0.16);
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 220ms var(--ease-soft) both;
+  --animate-pop: pop 180ms var(--ease-soft) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+}
+
+/* ── Base ── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+  html[lang='fa'] {
+    font-family: var(--font-fa);
+  }
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background:
+      radial-gradient(1200px 600px at 100% -10%, rgb(234 211 191 / 0.55), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgb(198 211 189 / 0.35), transparent 60%),
+      var(--color-background);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+  /* En persan, Vazirmatn remplace Fraunces pour les titres */
+  html[lang='fa'] h1,
+  html[lang='fa'] h2,
+  html[lang='fa'] h3,
+  html[lang='fa'] .font-display {
+    font-family: var(--font-fa);
+    letter-spacing: 0;
+  }
+  :focus-visible {
+    outline: 2.5px solid var(--color-coral-strong);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  ::selection {
+    background: var(--color-coral);
+    color: var(--color-text);
+  }
+  button, [role='button'], a, label, summary {
+    touch-action: manipulation;
+  }
+}
+
+/* ── Utilitaires ── */
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+@utility pt-safe {
+  padding-top: max(env(safe-area-inset-top), 0px);
+}
+@utility card {
+  background: var(--color-surface);
+  border: 1px solid rgb(226 216 203 / 0.9);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+@utility skeleton {
+  background: linear-gradient(90deg, var(--color-surface-2) 25%, #fdfaf6 37%, var(--color-surface-2) 63%);
+  background-size: 400% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: 10px;
+}
+
+/* ── Mouvement réduit ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,9 @@
+---
+import ComingSoon from '@/components/layout/ComingSoon.astro';
+import { getDictionary, useTranslations } from '@/i18n';
+const t = useTranslations(Astro.locals.locale);
+const L = getDictionary(Astro.locals.locale).subnav;
+const tabs = [{ href: '/finances', label: L.overview }, { href: '/finances/transactions', label: L.transactions }, { href: '/finances/budgets', label: L.budgets }, { href: '/finances/recurrences', label: L.recurring }, { href: '/finances/epargne', label: L.savings }, { href: '/finances/transferts', label: L.transfers }, { href: '/finances/bilans', label: L.reports }];
+---
+
+<ComingSoon title={t('pages.finances')} phase={4} tabs={tabs} />

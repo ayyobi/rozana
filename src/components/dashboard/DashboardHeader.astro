@@ -1,0 +1,102 @@
+---
+import Logo from '@/components/layout/Logo.astro';
+import { Bell, Settings, LogOut } from 'lucide-react';
+import { getDictionary, useTranslations } from '@/i18n';
+import { dayIndex, formatLongDate, greetingKey } from '@/lib/utils/dates';
+import type { TZDate } from '@date-fns/tz';
+
+interface Props {
+  now: TZDate;
+  timeZone: string;
+}
+const { now, timeZone } = Astro.props;
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
+const quotes = getDictionary(locale).quotes;
+const quote = quotes[dayIndex(now, quotes.length)];
+const user = Astro.locals.user;
+const displayName = (user?.name as string | undefined)?.trim() || '';
+const initial = (displayName || (user?.email as string | undefined) || 'R').charAt(0).toUpperCase();
+---
+
+<header class="mb-6 flex flex-col gap-5 lg:mb-8">
+  <div class="flex items-center justify-between gap-3">
+    <div class="lg:hidden"><Logo /></div>
+    <p class="hidden text-sm font-medium text-ink first-letter:uppercase lg:block">
+      <time datetime={now.toISOString()}>{formatLongDate(now, locale, timeZone)}</time>
+    </p>
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        popovertarget="notif-pop"
+        class="relative grid size-11 place-items-center rounded-full bg-surface/80 shadow-soft hover:bg-surface"
+        aria-label={t('header.notifications')}
+      >
+        <Bell className="size-5" strokeWidth={1.9} aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        popovertarget="profile-pop"
+        class="grid size-11 place-items-center rounded-full bg-peach font-display text-lg font-semibold shadow-soft"
+        aria-label={t('header.profile')}
+      >
+        {initial}
+      </button>
+    </div>
+  </div>
+
+  <div class="relative overflow-clip rounded-[28px] bg-surface/75 px-6 py-6 shadow-soft sm:px-8 sm:py-8">
+    <svg class="pointer-events-none absolute -end-4 -bottom-2 hidden w-64 text-ink/20 sm:block" viewBox="0 0 240 120" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+      <circle cx="150" cy="96" r="44" fill="var(--color-apricot-soft)" stroke="none" />
+      <path d="M150 34v-12M112 50l-8-8M188 50l8-8M96 82H84M216 82h-12" />
+      <path d="M0 96c40-18 70-18 110-6s80 14 130-4" fill="var(--color-peach-soft)" stroke="none" />
+      <path d="M0 108c50-14 90-12 130-2s70 8 110-4" fill="var(--color-sage)" stroke="none" opacity="0.55" />
+    </svg>
+    <p class="text-sm text-ink first-letter:uppercase lg:hidden">
+      <time datetime={now.toISOString()}>{formatLongDate(now, locale, timeZone)}</time>
+    </p>
+    <h1 class="mt-1 text-3xl font-semibold sm:text-4xl">
+      {t(`greeting.${greetingKey(now)}`)}{displayName ? `, ${displayName}` : ''}
+    </h1>
+    <p class="mt-2 text-base text-ink sm:text-lg">{t('greeting.subtitle')}</p>
+    {quote && <p class="mt-4 max-w-md text-sm text-ink-2">« {quote} »</p>}
+  </div>
+</header>
+
+<!-- Popovers natifs : fonctionnent sans JavaScript -->
+<div id="notif-pop" popover class="pop m-0 w-80 max-w-[calc(100vw-2rem)] rounded-card border border-line bg-surface p-5 text-ink shadow-lift">
+  <p class="font-display text-lg font-semibold">{t('header.notifications')}</p>
+  <p class="mt-2 text-sm text-ink-2">{t('header.noNotifications')}</p>
+</div>
+
+<div id="profile-pop" popover class="pop m-0 w-72 max-w-[calc(100vw-2rem)] rounded-card border border-line bg-surface p-2 text-ink shadow-lift">
+  <div class="px-3 py-2">
+    {displayName && <p class="font-medium">{displayName}</p>}
+    <p class="truncate text-sm text-ink-2">{user?.email}</p>
+  </div>
+  <a href="/parametres" class="flex h-11 items-center gap-3 rounded-2xl px-3 hover:bg-bg/50">
+    <Settings className="size-4" aria-hidden="true" />{t('nav.settings')}
+  </a>
+  <form method="post" action="/api/auth/logout">
+    <button type="submit" class="flex h-11 w-full items-center gap-3 rounded-2xl px-3 text-start hover:bg-bg/50">
+      <LogOut className="size-4 rtl:-scale-x-100" aria-hidden="true" />{t('nav.logout')}
+    </button>
+  </form>
+</div>
+
+<style>
+  .pop {
+    inset: auto;
+    top: calc(env(safe-area-inset-top) + 4.25rem);
+    inset-inline-end: 1rem;
+  }
+  @media (min-width: 1024px) {
+    .pop {
+      top: 5.5rem;
+      inset-inline-end: 2.5rem;
+    }
+  }
+  .pop::backdrop {
+    background: transparent;
+  }
+</style>

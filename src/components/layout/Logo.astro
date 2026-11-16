@@ -1,0 +1,28 @@
+---
+interface Props {
+  size?: 'sm' | 'lg';
+  showFa?: boolean;
+}
+const { size = 'sm', showFa = true } = Astro.props;
+const big = size === 'lg';
+---
+
+<a href="/dashboard" class="group inline-flex items-center gap-2.5 rounded-xl" aria-label="Rozana — روزانه">
+  <span
+    class:list={[
+      'grid place-items-center rounded-2xl bg-coral shadow-soft transition-transform duration-200 group-hover:-rotate-6',
+      big ? 'size-14' : 'size-10',
+    ]}
+    aria-hidden="true"
+  >
+    <svg viewBox="0 0 32 32" class={big ? 'size-8' : 'size-6'} fill="none" stroke="var(--color-text)" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M8.5 20a7.5 7.5 0 0 1 15 0" fill="var(--color-surface)" />
+      <path d="M16 6.5v3M7.5 11l2 2M24.5 11l-2 2" />
+      <path d="M5 20h22M10 25h12" />
+    </svg>
+  </span>
+  <span class="flex flex-col leading-none">
+    <span class:list={['font-display font-semibold text-ink', big ? 'text-3xl' : 'text-xl']} style="font-family: var(--font-display)">Rozana</span>
+    {showFa && <span class:list={['text-ink-2', big ? 'text-base mt-1' : 'text-xs mt-0.5']} style="font-family: var(--font-fa)" lang="fa" dir="rtl">روزانه</span>}
+  </span>
+</a>
