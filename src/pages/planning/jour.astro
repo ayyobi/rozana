@@ -1,9 +1,17 @@
 ---
-import ComingSoon from '@/components/layout/ComingSoon.astro';
-import { getDictionary, useTranslations } from '@/i18n';
-const t = useTranslations(Astro.locals.locale);
-const L = getDictionary(Astro.locals.locale).subnav;
-const tabs = [{ href: '/planning/jour', label: L.day }, { href: '/planning/semaine', label: L.week }, { href: '/planning/mois', label: L.month }];
+import AppLayout from '@/layouts/AppLayout.astro';
+import PlanningApp from '@/components/calendar/PlanningApp';
+import { useTranslations } from '@/i18n';
+import { isDayStr, todayIn } from '@/lib/utils/day';
+
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
+const today = todayIn(Astro.locals.timezone);
+const param = Astro.url.searchParams.get('date');
+const date = isDayStr(param) ? param : today;
+const currency = Astro.locals.settings?.currency ?? 'EUR';
 ---
 
-<ComingSoon title={t('pages.planning')} phase={3} tabs={tabs} />
+<AppLayout title={t('nav.planning')}>
+  <PlanningApp client:load locale={locale} today={today} view="day" date={date} currency={currency} />
+</AppLayout>

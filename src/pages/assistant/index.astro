@@ -1,7 +1,11 @@
 ---
-import ComingSoon from '@/components/layout/ComingSoon.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import AssistantApp from '@/components/assistant/AssistantApp';
 import { useTranslations } from '@/i18n';
-const t = useTranslations(Astro.locals.locale);
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
 ---
 
-<ComingSoon title={t('pages.assistant')} phase={6} />
+<AppLayout title={t('nav.assistant')}>
+  <AssistantApp client:load locale={locale} />
+</AppLayout>

@@ -12,6 +12,15 @@ if (!existsSync(bin)) {
   );
   process.exit(1);
 }
+// Transmet le fichier .env à PocketBase (mode d'inscription, code d'invitation…).
+const envFile = join(process.cwd(), '.env');
+if (existsSync(envFile)) {
+  try {
+    process.loadEnvFile(envFile);
+  } catch {
+    /* Node trop ancien : variables du shell uniquement */
+  }
+}
 const args = process.argv.slice(2);
-const child = spawn(bin, args.length ? args : ['serve'], { stdio: 'inherit' });
+const child = spawn(bin, args.length ? args : ['serve'], { stdio: 'inherit', env: process.env });
 child.on('exit', (code) => process.exit(code ?? 0));

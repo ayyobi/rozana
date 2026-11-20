@@ -52,4 +52,13 @@ const status = await getSetupStatus(Astro.locals.pb);
       </p>
     </div>
   </main>
+  {
+    params.get('bye') && (
+      <script>
+        // Déconnexion : on efface les copies locales (cache hors ligne, file d'attente).
+        import('@/lib/offline/idb').then((m) => m.wipeLocalData()).catch(() => undefined);
+        if ('caches' in window) caches.keys().then((keys) => keys.filter((k) => k.includes('pages')).forEach((k) => caches.delete(k)));
+      </script>
+    )
+  }
 </BaseLayout>

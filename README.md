@@ -1,54 +1,58 @@
 # Rozana · روزانه
 
-*Chaque jour, à ton rythme.* — application personnelle de planning, tâches, habitudes et finances (PWA, FR/FA).
+*Chaque jour, à ton rythme.* — application personnelle de planning, tâches, projets, habitudes et finances (PWA, français / persan).
 
+- État d'avancement : [`docs/PLAN.md`](docs/PLAN.md)
 - Architecture et collections : [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- Plan et état d'avancement : [`docs/PLAN.md`](docs/PLAN.md)
+- Notifications : [`docs/NOTIFICATIONS.md`](docs/NOTIFICATIONS.md) · Assistant IA : [`docs/ASSISTANT.md`](docs/ASSISTANT.md) · Mise en ligne : [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md)
 
 ## Prérequis
 
-- Node.js ≥ 20.19 (testé avec 22)
-- PocketBase **0.40.x** : télécharger le binaire pour ton système sur
-  https://github.com/pocketbase/pocketbase/releases (ex. `pocketbase_0.40.0_windows_amd64.zip`)
-  et placer `pocketbase` / `pocketbase.exe` à la racine du projet (il est ignoré par Git).
+- Node.js ≥ 20.19 (22 ou 24 conseillé)
+- PocketBase **0.40.x** à la racine du projet (`pocketbase.exe` sous Windows) :
+  https://github.com/pocketbase/pocketbase/releases
 
 ## Démarrage en local
 
 ```bash
 npm install
-cp .env.example .env            # Windows : copy .env.example .env
+# copie .env.example en .env (une seule fois)
 
-# Terminal 1 — PocketBase (charge pb_migrations/ et pb_hooks/). Laisse-le ouvert.
+# Terminal 1 — PocketBase (applique pb_migrations/ et pb_hooks/). Laisse-le ouvert.
 npm run pb
-#    → au premier lancement, crée aussi ton superuser via le lien affiché
 
-# Terminal 2 — Application
-npm run dev                      # http://localhost:4321
+# Terminal 2 — l'application
+npm run dev            # http://localhost:4321
 ```
 
-**Premier compte :** sur la page de connexion, clique sur « Première utilisation ? Crée ton compte ».
-L'inscription n'est possible que tant qu'aucun compte n'existe ; elle se ferme ensuite toute seule
-(vérifié côté PocketBase, pas seulement dans l'interface).
+## Plusieurs utilisateurs
 
-> ⚠️ En production, crée ton compte **juste après le premier déploiement** : tant qu'aucun compte
-> n'existe, la première personne qui s'inscrit devient la propriétaire.
+Chaque personne crée son compte avec « Pas encore de compte ? Crée ton espace » sur la page de connexion. Chacun a **son propre espace** : tâches, planning, projets, habitudes et finances ne sont visibles que par leur propriétaire (vérifié par les règles PocketBase et par les tests).
 
-**« PocketBase ne répond pas » ?** Le terminal 1 n'est pas lancé, `pocketbase.exe` n'est pas à la
-racine du projet, ou `PUBLIC_PB_URL` dans `.env` ne pointe pas vers `http://127.0.0.1:8090`.
+Mode d'inscription, dans `.env` (puis relancer `npm run pb`) :
 
-Astuce : `/dashboard?apercu=1` affiche une maquette avec des données d'exemple, clairement signalée par un bandeau. Rien n'est enregistré ; ce mode disparaîtra en phase 3.
+| Réglage | Effet |
+|---|---|
+| `ROZANA_SIGNUP=open` (défaut) | tout le monde peut créer son espace |
+| `ROZANA_SIGNUP=invite` + `ROZANA_INVITE_CODE=…` | il faut le code d'invitation |
+| `ROZANA_SIGNUP=closed` | plus d'inscription (comptes créés dans le tableau de bord PocketBase) |
 
-## Scripts
+Une fois l'application en ligne, préfère `invite` ou `closed`.
+
+## Commandes
 
 | Commande | Rôle |
 |---|---|
-| `npm run pb` | lance PocketBase (binaire à la racine) |
-| `npm run dev` | serveur de développement |
+| `npm run pb` | lance PocketBase |
+| `npm run dev` | développement |
 | `npm run check` | vérification TypeScript / Astro |
-| `npm run build` | build de production (`dist/`) |
-| `npm start` | lance le build (`HOST`, `PORT`, variables `.env`) |
+| `npm test` | tests unitaires (finances, dates, récurrences, conflits) |
+| `npm run test:permissions` | tests de sécurité PocketBase (**base de test uniquement**) |
+| `npm run build` / `npm start` | production |
+| `npm run vapid` | génère les clés des notifications push |
+| `npm run build:worker` / `npm run worker` | processus des rappels push |
 
-## Sécurité — à retenir
+## Sécurité
 
-- Ne mets jamais de secret dans Git ni dans une conversation : uniquement dans `.env` (local) ou dans les variables du serveur.
-- En production : HTTPS obligatoire (PWA + notifications iPhone), `SITE_URL` renseigné.
+- Aucun secret dans Git ni dans une conversation : seulement dans `.env` ou les variables du serveur.
+- En production : HTTPS, `SITE_URL`, sauvegardes PocketBase testées (voir DEPLOIEMENT.md).

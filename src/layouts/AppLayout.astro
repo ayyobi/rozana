@@ -4,7 +4,9 @@ import Sidebar from '@/components/layout/Sidebar.astro';
 import BottomNav from '@/components/layout/BottomNav.astro';
 import QuickAdd from '@/components/layout/QuickAdd';
 import Toaster from '@/components/ui/Toaster';
+import SyncIndicator from '@/components/layout/SyncIndicator';
 import { useTranslations } from '@/i18n';
+import { todayIn } from '@/lib/utils/day';
 
 interface Props {
   title?: string;
@@ -12,6 +14,8 @@ interface Props {
 const { title } = Astro.props;
 const locale = Astro.locals.locale;
 const t = useTranslations(locale);
+const today = todayIn(Astro.locals.timezone);
+const currency = Astro.locals.settings?.currency ?? 'EUR';
 ---
 
 <BaseLayout title={title}>
@@ -30,6 +34,7 @@ const t = useTranslations(locale);
     </main>
   </div>
   <BottomNav />
-  <QuickAdd client:idle locale={locale} />
+  <QuickAdd client:idle locale={locale} today={today} currency={currency} />
   <Toaster client:idle dismissLabel={t('toast.dismiss')} />
+  <SyncIndicator client:idle locale={locale} />
 </BaseLayout>

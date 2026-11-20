@@ -1,7 +1,12 @@
 ---
-import ComingSoon from '@/components/layout/ComingSoon.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import HabitsApp from '@/components/habits/HabitsApp';
 import { useTranslations } from '@/i18n';
-const t = useTranslations(Astro.locals.locale);
+import { todayIn } from '@/lib/utils/day';
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
 ---
 
-<ComingSoon title={t('pages.habits')} phase={6} />
+<AppLayout title={t('nav.habits')}>
+  <HabitsApp client:load locale={locale} today={todayIn(Astro.locals.timezone)} />
+</AppLayout>

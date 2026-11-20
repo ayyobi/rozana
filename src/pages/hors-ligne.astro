@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Logo from '@/components/layout/Logo.astro';
+import { Sunrise } from '@/components/ui/illustrations';
+import { useTranslations } from '@/i18n';
+const t = useTranslations(Astro.locals.locale);
+// Page mise en cache par le service worker : elle doit rester statique et sans données.
+Astro.response.headers.set('Cache-Control', 'public, max-age=3600');
+---
+
+<BaseLayout title={t('offline.title')}>
+  <main class="grid min-h-dvh place-items-center px-6 text-center">
+    <div class="flex max-w-sm flex-col items-center gap-4">
+      <Logo size="lg" />
+      <div class="w-32 text-coral-strong/70" aria-hidden="true"><Sunrise /></div>
+      <h1 class="text-2xl font-semibold">{t('offline.title')}</h1>
+      <p class="text-ink-2">{t('offline.text')}</p>
+      <button type="button" onclick="location.reload()" class="h-11 rounded-pill bg-coral px-6 font-medium">{t('common.retry')}</button>
+    </div>
+  </main>
+</BaseLayout>

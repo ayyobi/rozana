@@ -9,3 +9,4 @@ pocketbase
 pocketbase.exe
 *.log
 .DS_Store
+dist-worker/

@@ -1,9 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
-import { createServerPb, writeAuthCookie } from '@/lib/pocketbase/server';
+import { createServerPb, secureCookies, writeAuthCookie } from '@/lib/pocketbase/server';
 import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale } from '@/i18n';
+import { ensureUserSetup } from '@/lib/setup/seed';
+import { DEFAULT_TIMEZONE } from '@/lib/utils/dates';
 
 /** Routes accessibles sans session. Tout le reste est privé. */
-const PUBLIC_PATHS = ['/connexion', '/inscription', '/api/auth/login', '/api/auth/register', '/hors-ligne', '/manifest.webmanifest', '/sw.js'];
+const PUBLIC_PATHS = ['/connexion', '/inscription', '/api/auth/login', '/api/auth/register', '/hors-ligne', '/manifest.webmanifest', '/sw.js', '/favicon.ico'];
 const PUBLIC_PREFIXES = ['/_astro/', '/icons/', '/fonts/'];
 
 function isPublic(pathname: string): boolean {
@@ -36,6 +38,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
     pb.authStore.clear();
   }
 
+  locals.settings = null;
+  locals.timezone = DEFAULT_TIMEZONE;
+  if (locals.user) {
+    try {
+      locals.settings = await ensureUserSetup(pb, locals.user.id, locals.locale, DEFAULT_TIMEZONE);
+      locals.locale = locals.settings.locale;
+      locals.timezone = locals.settings.timezone || DEFAULT_TIMEZONE;
+    } catch (err) {
+      console.error('[rozana] réglages indisponibles', err);
+    }
+  }
+
   if (!locals.user && !isPublic(url.pathname)) {
     if (url.pathname.startsWith('/api/')) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), {
@@ -54,7 +68,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
 
   // Rafraîchit le cookie (nouveau jeton) sur les pages privées.
-  if (locals.user) writeAuthCookie(pb, cookies, import.meta.env.PROD);
+  if (locals.user) writeAuthCookie(pb, cookies, secureCookies(url));
 
   // En-têtes de sécurité de base. La CSP complète est réglée au déploiement (voir docs).
   response.headers.set('X-Content-Type-Options', 'nosniff');

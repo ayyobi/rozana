@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { ArrowRight, CalendarClock, Clock, Flag, FolderHeart, Leaf, Wallet } from 'lucide-react';
 import { Badge, Card, EmptyState, Progress, RoundCheckbox } from '@/components/ui/primitives';
 import { Coins, Cup, Folder, Sprout, Sunrise } from '@/components/ui/illustrations';
@@ -38,14 +38,14 @@ export function WidgetFrame({
   return (
     <Card tone={tone} className={cn('flex animate-fade-up flex-col p-5', className)} aria-labelledby={id}>
       <header className="mb-3 flex items-center justify-between gap-3">
-        <h2 id={id} className="flex items-center gap-2 text-lg font-semibold">
+        <h2 id={id} className="flex min-w-0 items-center gap-2 text-lg leading-tight font-semibold">
           <span className="grid size-8 place-items-center rounded-xl bg-white/60" aria-hidden>
             {icon}
           </span>
           {title}
         </h2>
         {href && (
-          <a href={href} className="inline-flex items-center gap-1 rounded-pill px-2.5 py-1 text-sm font-medium text-coral-strong hover:bg-white/50">
+          <a href={href} className="inline-flex shrink-0 items-center gap-1 rounded-pill px-2.5 py-1 text-sm font-medium whitespace-nowrap text-coral-strong hover:bg-white/50">
             {t('widgets.seeAll')}
             <ArrowRight className="size-3.5 rtl:-scale-x-100" aria-hidden />
           </a>
@@ -64,8 +64,7 @@ const priorityTone: Record<Priority, 'neutral' | 'sage' | 'apricot' | 'danger'> 
 };
 
 /* ── Mes priorités ────────────────────────────── */
-export function PrioritiesWidget({ items, t, interactive }: { items: PriorityTask[]; t: T; interactive: boolean }) {
-  const [state, setState] = useState(() => Object.fromEntries(items.map((i) => [i.id, i.done])));
+export function PrioritiesWidget({ items, t, onToggle }: { items: PriorityTask[]; t: T; onToggle: (id: string, done: boolean) => void }) {
   return (
     <WidgetFrame title={t('widgets.priorities.title')} icon={<Flag className="size-4" />} href="/taches" t={t} className="h-full">
       {items.length === 0 ? (
@@ -73,15 +72,10 @@ export function PrioritiesWidget({ items, t, interactive }: { items: PriorityTas
       ) : (
         <ul className="flex flex-col gap-2">
           {items.slice(0, 3).map((task) => {
-            const done = state[task.id] ?? task.done;
+            const done = task.done;
             return (
               <li key={task.id} className="flex items-center gap-3 rounded-2xl bg-white/55 px-3.5 py-3">
-                <RoundCheckbox
-                  checked={done}
-                  disabled={!interactive}
-                  label={task.title}
-                  onChange={(v) => setState((s) => ({ ...s, [task.id]: v }))}
-                />
+                <RoundCheckbox checked={done} label={task.title} onChange={(v) => onToggle(task.id, v)} />
                 <div className="min-w-0 flex-1">
                   <p className={cn('truncate font-medium transition-colors', done && 'text-ink-2 line-through decoration-coral-strong/60')}>{task.title}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -173,8 +167,7 @@ export function ProjectsWidget({ items, t }: { items: ProjectSummary[]; t: T }) 
 }
 
 /* ── Mes habitudes ────────────────────────────── */
-export function HabitsWidget({ items, t, interactive }: { items: HabitToday[]; t: T; interactive: boolean }) {
-  const [state, setState] = useState(() => Object.fromEntries(items.map((i) => [i.id, i.done])));
+export function HabitsWidget({ items, t, onToggle }: { items: HabitToday[]; t: T; onToggle: (id: string, done: boolean) => void }) {
   return (
     <WidgetFrame title={t('widgets.habits.title')} icon={<Leaf className="size-4" />} href="/habitudes" t={t} tone="sage" className="h-full">
       {items.length === 0 ? (
@@ -182,15 +175,15 @@ export function HabitsWidget({ items, t, interactive }: { items: HabitToday[]; t
       ) : (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
           {items.map((h) => {
-            const done = state[h.id] ?? h.done;
+            const done = h.done;
             return (
               <li key={h.id}>
                 <button
                   type="button"
                   role="checkbox"
                   aria-checked={done}
-                  disabled={!interactive}
-                  onClick={() => setState((s) => ({ ...s, [h.id]: !done }))}
+                  aria-label={h.name}
+                  onClick={() => onToggle(h.id, !done)}
                   className={cn(
                     'flex w-full items-center gap-3 rounded-2xl border-2 px-3 py-2.5 text-start transition-all duration-200 ease-soft',
                     done ? 'border-sage-strong/40 bg-white/80' : 'border-transparent bg-white/50 hover:bg-white/70',

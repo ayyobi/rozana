@@ -1,36 +1,58 @@
-# Plan de développement Rozana
+# État d'avancement de Rozana
 
-Légende : ✅ fait et testé · 🟡 partiel · ⏳ à faire
+Légende : ✅ fait et testé · 🟡 fait, à tester sur appareil réel · ⏳ à faire
 
-## Phase 1 — Fondations et design ✅
-- ✅ Astro 7 + React 19 + Tailwind 4 + TypeScript strict
-- ✅ Design system (palette officielle + variantes AA, Fraunces / DM Sans / Vazirmatn, rayons, ombres, animations 150‑250 ms, `prefers-reduced-motion`)
-- ✅ Composants UI : Button, Card, Badge, RoundCheckbox, Progress, Skeleton, EmptyState, Field, Modal, Toaster, illustrations
-- ✅ Layout desktop (sidebar) + navigation mobile (barre basse + feuille « Plus » + bouton +), safe areas iOS
-- ✅ Dashboard : en‑tête, 6 widgets, mini‑calendrier fonctionnel, registre de widgets (base de la personnalisation)
-- ✅ i18n FR / FA typée, RTL complet, chiffres persans
-- ✅ En avance sur la phase 2 : connexion réelle PocketBase, protection des routes côté serveur, inscription publique verrouillée
-- ✅ Manifest PWA + icônes (le service worker arrive en phase 5)
+## Fondations
+- ✅ Astro 7, React 19, Tailwind 4, TypeScript strict (0 erreur `astro check`)
+- ✅ Design system neutre et chaleureux, composants UI, états vides, squelettes, toasts, modales
+- ✅ Navigation : barre latérale (ordinateur), barre basse + menu « Plus » (mobile), bouton + partout
+- ✅ Bilingue FR / FA (RTL, Vazirmatn, chiffres persans), langue enregistrée dans le compte
 
-## Phase 2 — PocketBase et authentification
-1. Migrations de toutes les collections (voir ARCHITECTURE.md §5) + règles + index
-2. Script `npm run owner:create` (création unique du compte, identifiants hors conversation)
-3. `user_settings` : langue, fuseau, devise — remplace le cookie de langue
-4. Tests automatisés des permissions : un 2ᵉ utilisateur ne voit RIEN du 1ᵉʳ ; un visiteur anonyme ne lit ni n'écrit rien
-5. Export JSON et suppression complète des données
-6. Couche `src/services/*` + gestion d'erreurs/toasts
+## Données et sécurité
+- ✅ 22 collections PocketBase (migrations), règles « propriétaire uniquement », relations vérifiées
+- ✅ 14 tests de permissions (`npm run test:permissions`)
+- ✅ Plusieurs utilisateurs, chacun dans son propre espace (85 vérifications d'isolation) ; inscription ouverte, sur invitation ou fermée ; connexion, session vérifiée côté serveur, expiration
+- ✅ Export JSON, suppression du compte et de toutes les données, changement de mot de passe
+- ✅ Données de départ (catégories, catégories financières, compte courant) à la première connexion
 
-## Phase 3 — Planning
-Tâches (formulaire court + options dépliables, sous‑tâches, filtres, tri, recherche, report, duplication, retards), catégories, calendrier jour/semaine/mois (glisser‑déposer, conflits, récurrences), événements, projets (cartes/liste/kanban, sections, progression), dashboard branché sur les vraies données, suppression des données d'aperçu.
+## Planning
+- ✅ Tâches : ajout rapide, formulaire court + options avancées, sous-tâches, récurrence, liens, rappels, filtres, tri, recherche, dupliquer, reporter, supprimer avec confirmation, retards, à venir, historique
+- ✅ Calendrier jour / semaine / mois, navigation, Aujourd'hui, filtres par catégorie, glisser-déposer (ordinateur), événements récurrents (exception d'une occurrence), détection des conflits, rappels financiers, tâches ≠ événements visuellement
+- ✅ Catégories personnalisables
+- ✅ Projets : cartes / liste / kanban, sections, progression automatique, prochaines étapes, kanban des tâches
 
-## Phase 4 — Finances
-Comptes, transactions (centimes), catégories, budgets mensuels (manuel + suggestion priorisant l'essentiel), récurrences (échéances confirmables, anti‑doublon), épargne, transferts, graphiques Recharts, bilans hebdo/mensuels. Tests unitaires des calculs (Vitest).
+## Dashboard
+- ✅ Données réelles : priorités, planning du jour, projets, habitudes, finances, mini-calendrier avec indicateurs
+- ✅ Personnalisation (afficher, masquer, ordre, taille) enregistrée dans PocketBase
+- ✅ Cloche d'alertes (retards, budgets, échéances, transferts)
 
-## Phase 5 — PWA et notifications
-Service worker, page hors ligne, installation iPhone, abonnements push, worker de rappels, page de diagnostic, IndexedDB + file de synchronisation + conflits.
+## Habitudes
+- ✅ Création, jours, objectif chiffré, rappel, cocher / décocher, calendrier de suivi, taux 7 j / 30 j, semaine, mois, séries sans culpabilisation, archivage
 
-## Phase 6 — Fonctionnalités avancées
-Habitudes (sans culpabilisation), statistiques (pas de chiffres trompeurs si données insuffisantes), widgets personnalisables enregistrés dans `dashboard_widgets`, assistant IA (fournisseur abstrait, consentement, confirmation avant toute écriture, quotas), bilans intelligents.
+## Finances
+- ✅ Montants en centimes entiers (23 tests unitaires)
+- ✅ Comptes, catégories (dont « obligatoire »), transactions (CRUD, filtres, recherche, totaux)
+- ✅ Trois soldes distincts : enregistré, reste du budget, prévisionnel
+- ✅ Budgets mensuels + suggestion (obligatoire d'abord), copie du mois précédent
+- ✅ Récurrences : échéances à confirmer, jamais payées automatiquement, anti-doublon
+- ✅ Épargne : objectifs, contributions / retraits, mensualité recommandée, date estimée
+- ✅ Transferts : suivi par mois / année, frais, taux, dépense liée créée une seule fois
+- ✅ Bilans hebdomadaires / mensuels, comparaison, conseils, graphiques accessibles
 
-## Phase 7 — Tests et déploiement
-Tests fonctionnels (Playwright), calculs financiers, permissions, mobile, RTL, PWA, notifications sur iPhone réel, sauvegarde + restauration testée, déploiement HTTPS, documentation.
+## Statistiques
+- ✅ Productivité, habitudes, finances — aucune tendance affichée sans données suffisantes
+
+## PWA, hors ligne, notifications
+- ✅ Manifest, icônes, Service Worker, page hors ligne
+- ✅ Hors ligne : lecture des données synchronisées, file d'attente IndexedDB, synchronisation au retour, conflits (choix de version), indicateur ; jamais « enregistré » si seulement local
+- ✅ Push : abonnement, test, diagnostic, processus serveur des rappels (envoi réel vérifié vers un service push de test)
+- 🟡 Réception sur iPhone : nécessite un déploiement HTTPS (voir DEPLOIEMENT.md)
+
+## Assistant IA
+- ✅ Appels serveur, fournisseur interchangeable, consentement, quotas, état explicite sans clé, actions confirmées une par une
+- 🟡 Réponses réelles : à tester avec ta propre clé API
+
+## Pistes futures
+- ⏳ Calendrier solaire persan (architecture prête : `intlTag(locale, 'persian')`)
+- ⏳ Glisser-déposer tactile dans le calendrier (sur mobile : modifier la date dans le formulaire)
+- ⏳ Conversion multi-devises dans les totaux (aujourd'hui : devise principale)

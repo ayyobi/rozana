@@ -1,0 +1,33 @@
+---
+import { getDictionary } from '@/i18n';
+
+const L = getDictionary(Astro.locals.locale).subnav;
+const path = Astro.url.pathname.replace(/\/$/, '');
+const tabs = [
+  { href: '/finances', label: L.overview },
+  { href: '/finances/transactions', label: L.transactions },
+  { href: '/finances/budgets', label: L.budgets },
+  { href: '/finances/recurrences', label: L.recurring },
+  { href: '/finances/epargne', label: L.savings },
+  { href: '/finances/transferts', label: L.transfers },
+  { href: '/finances/bilans', label: L.reports },
+];
+---
+
+<nav class="-mx-4 mb-5 overflow-x-auto px-4 pb-1" aria-label={getDictionary(Astro.locals.locale).nav.finances}>
+  <ul class="flex w-max gap-2">
+    {
+      tabs.map((tab) => (
+        <li>
+          <a
+            href={tab.href}
+            aria-current={path === tab.href ? 'page' : undefined}
+            class:list={['inline-flex h-10 items-center rounded-pill px-4 text-sm font-medium whitespace-nowrap transition-colors', path === tab.href ? 'bg-coral shadow-soft' : 'bg-surface/70 hover:bg-surface']}
+          >
+            {tab.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

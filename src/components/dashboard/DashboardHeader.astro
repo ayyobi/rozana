@@ -1,6 +1,8 @@
 ---
 import Logo from '@/components/layout/Logo.astro';
-import { Bell, Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
+import NotificationsBell from '@/components/layout/NotificationsBell';
+import { todayIn } from '@/lib/utils/day';
 import { getDictionary, useTranslations } from '@/i18n';
 import { dayIndex, formatLongDate, greetingKey } from '@/lib/utils/dates';
 import type { TZDate } from '@date-fns/tz';
@@ -26,14 +28,7 @@ const initial = (displayName || (user?.email as string | undefined) || 'R').char
       <time datetime={now.toISOString()}>{formatLongDate(now, locale, timeZone)}</time>
     </p>
     <div class="flex items-center gap-2">
-      <button
-        type="button"
-        popovertarget="notif-pop"
-        class="relative grid size-11 place-items-center rounded-full bg-surface/80 shadow-soft hover:bg-surface"
-        aria-label={t('header.notifications')}
-      >
-        <Bell className="size-5" strokeWidth={1.9} aria-hidden="true" />
-      </button>
+      <NotificationsBell client:idle locale={locale} today={todayIn(timeZone)} currency={Astro.locals.settings?.currency ?? 'EUR'} alertPct={Astro.locals.settings?.budget_alert_pct || 80} />
       <button
         type="button"
         popovertarget="profile-pop"
@@ -64,11 +59,6 @@ const initial = (displayName || (user?.email as string | undefined) || 'R').char
 </header>
 
 <!-- Popovers natifs : fonctionnent sans JavaScript -->
-<div id="notif-pop" popover class="pop m-0 w-80 max-w-[calc(100vw-2rem)] rounded-card border border-line bg-surface p-5 text-ink shadow-lift">
-  <p class="font-display text-lg font-semibold">{t('header.notifications')}</p>
-  <p class="mt-2 text-sm text-ink-2">{t('header.noNotifications')}</p>
-</div>
-
 <div id="profile-pop" popover class="pop m-0 w-72 max-w-[calc(100vw-2rem)] rounded-card border border-line bg-surface p-2 text-ink shadow-lift">
   <div class="px-3 py-2">
     {displayName && <p class="font-medium">{displayName}</p>}

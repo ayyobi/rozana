@@ -1,7 +1,12 @@
 ---
-import ComingSoon from '@/components/layout/ComingSoon.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import StatsApp from '@/components/stats/StatsApp';
 import { useTranslations } from '@/i18n';
-const t = useTranslations(Astro.locals.locale);
+import { todayIn } from '@/lib/utils/day';
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
 ---
 
-<ComingSoon title={t('pages.stats')} phase={6} />
+<AppLayout title={t('nav.stats')}>
+  <StatsApp client:load locale={locale} today={todayIn(Astro.locals.timezone)} currency={Astro.locals.settings?.currency ?? 'EUR'} />
+</AppLayout>

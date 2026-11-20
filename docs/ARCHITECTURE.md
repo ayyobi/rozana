@@ -46,7 +46,7 @@
 
 ## 2. Authentification et sécurité
 
-- **Inscription du premier compte uniquement** : le hook `pb_hooks/rozana.pb.js` refuse toute création de compte dès qu'un utilisateur existe (sauf superuser). Page `/inscription` visible seulement tant qu'aucun compte n'existe.
+- **Multi-utilisateurs, espaces séparés** : chaque enregistrement porte un `owner` ; les règles PocketBase limitent lecture et écriture au propriétaire. Inscription réglable (`ROZANA_SIGNUP` = `open` / `invite` / `closed`, `ROZANA_INVITE_CODE`), appliquée par le hook `pb_hooks/rozana.pb.js` côté serveur.
 - **Session** : cookie `pb_auth` (jeton PocketBase). À chaque requête de page, le middleware revalide le jeton auprès de PocketBase (`authRefresh`) ; jeton invalide → redirection `/connexion?expired=1`.
 - Le cookie n'est **pas** `httpOnly` : le SDK du navigateur doit lire le jeton pour parler directement à PocketBase (indispensable pour la synchronisation hors ligne). La protection réelle est faite par **les règles PocketBase**, vérifiées côté serveur. Contreparties : `SameSite=Lax`, `Secure` en production, CSP stricte au déploiement, aucun HTML utilisateur injecté.
 - **CSRF** : vérification d'origine d'Astro (`security.checkOrigin`), `SITE_URL` réglé en production.
@@ -122,7 +122,7 @@ Conventions communes à toutes les collections privées :
 | `savings_goals` | **owner**, **name**, **target_cents**, **currency**, target_date, notes, archived | contributions cascade | (owner) |
 | `savings_contributions` | **owner**, **goal**, **amount_cents** (≠0, négatif = retrait), **date**, note, transaction | goal cascade | (goal, date) |
 | `money_transfers` | **owner**, **recipient**, **amount_cents**, **currency**, fee_cents, rate (texte décimal exact), received_cents, received_currency, **date**, **status** (`planned`/`sent`/`received`/`cancelled`), notes, transaction | transaction → `null` | (owner, date) |
-| `reminders` | **owner**, **target_type** (task/event/habit/finance/summary), target_id, **fire_at** (UTC), **channel** (`push`), title, body, url, **status** (`pending`/`sent`/`failed`/`cancelled`), attempts, sent_at | — (nettoyés par le worker) | (status, fire_at) |
+| `reminders` | **owner**, **dedupe_key**, target_type, target_id, title, status, sent_at — journal des rappels envoyés (anti-doublon) | owner cascade | **unique(owner, dedupe_key)** |
 | `push_subscriptions` | **owner**, **endpoint** (unique), **p256dh**, **auth**, user_agent, last_success_at, failures | owner cascade | unique(endpoint) |
 | `dashboard_widgets` | **owner**, **widget** (id du registre), **visible**, **order**, **size** | owner cascade | unique(owner, widget) |
 | `ai_conversations` | **owner**, title, archived | messages cascade | (owner) |
@@ -139,8 +139,7 @@ Points de vigilance :
 
 1. L'utilisatrice active les notifications **après un geste** (bouton), dans la PWA installée (iOS 16.4+).
 2. Le navigateur crée un abonnement (clé VAPID publique) → enregistré dans `push_subscriptions`.
-3. Chaque création/modification de tâche, événement, habitude ou récurrence (re)calcule ses `reminders`.
-4. Le **worker** (`scripts/reminder-worker.ts`, processus séparé géré par systemd/pm2) lit toutes les minutes les rappels `pending` dont `fire_at ≤ maintenant`, envoie le push, marque `sent` ; abonnement 404/410 → supprimé.
+4. Le **worker** (`scripts/reminder-worker.ts`, processus séparé) calcule chaque minute les rappels dus à partir des tâches, événements, habitudes et finances, les enregistre dans `reminders` (index unique = un seul envoi) puis envoie le push ; abonnement 404/410 → supprimé.
 5. Page `/parametres/notifications` : diagnostic (PWA installée ? permission ? abonnement ? dernier envoi ?) + bouton « Envoyer une notification de test ».
 
 ## 7. Hors ligne (phase 5)

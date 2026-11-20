@@ -1,9 +1,18 @@
 ---
-import ComingSoon from '@/components/layout/ComingSoon.astro';
-import { getDictionary, useTranslations } from '@/i18n';
-const t = useTranslations(Astro.locals.locale);
-const L = getDictionary(Astro.locals.locale).subnav;
-const tabs = [{ href: '/finances', label: L.overview }, { href: '/finances/transactions', label: L.transactions }, { href: '/finances/budgets', label: L.budgets }, { href: '/finances/recurrences', label: L.recurring }, { href: '/finances/epargne', label: L.savings }, { href: '/finances/transferts', label: L.transfers }, { href: '/finances/bilans', label: L.reports }];
+import AppLayout from '@/layouts/AppLayout.astro';
+import FinanceTabs from '@/components/finance/FinanceTabs.astro';
+import SavingsApp from '@/components/finance/SavingsApp';
+import { useTranslations } from '@/i18n';
+import { todayIn } from '@/lib/utils/day';
+
+const locale = Astro.locals.locale;
+const t = useTranslations(locale);
+const today = todayIn(Astro.locals.timezone);
+const currency = Astro.locals.settings?.currency ?? 'EUR';
 ---
 
-<ComingSoon title={t('pages.finances')} phase={4} tabs={tabs} />
+<AppLayout title={t('finance.savings.title')}>
+  <h1 class="mb-4 text-3xl font-semibold sm:text-4xl">{t('finance.savings.title')}</h1>
+  <FinanceTabs />
+  <SavingsApp client:load locale={locale} today={today} currency={currency} />
+</AppLayout>

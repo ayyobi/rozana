@@ -3,7 +3,7 @@ import { Field } from '@/components/ui/primitives';
 import { Button } from '@/components/ui/Button';
 import { useTranslations, type Locale, type TranslationKey } from '@/i18n';
 
-type ErrorCode = 'invalid' | 'unavailable' | 'too_many' | 'closed' | 'mismatch' | 'too_short' | 'email_taken';
+type ErrorCode = 'invalid' | 'unavailable' | 'too_many' | 'closed' | 'mismatch' | 'too_short' | 'email_taken' | 'bad_invite';
 
 const MESSAGES: Record<ErrorCode, TranslationKey> = {
   invalid: 'auth.signupInvalid',
@@ -13,9 +13,10 @@ const MESSAGES: Record<ErrorCode, TranslationKey> = {
   mismatch: 'auth.passwordMismatch',
   too_short: 'auth.passwordTooShort',
   email_taken: 'auth.emailTaken',
+  bad_invite: 'auth.badInvite',
 };
 
-export default function SignupForm({ locale }: { locale: Locale }) {
+export default function SignupForm({ locale, inviteRequired = false }: { locale: Locale; inviteRequired?: boolean }) {
   const t = useTranslations(locale);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorCode | null>(null);
@@ -35,7 +36,7 @@ export default function SignupForm({ locale }: { locale: Locale }) {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name: form.get('name') ?? '', email: form.get('email'), password, passwordConfirm }),
+        body: JSON.stringify({ name: form.get('name') ?? '', email: form.get('email'), password, passwordConfirm, invite: form.get('invite') ?? '' }),
       });
       if (res.ok) {
         window.location.assign('/dashboard');
@@ -51,6 +52,7 @@ export default function SignupForm({ locale }: { locale: Locale }) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      {inviteRequired && <Field label={t('auth.invite')} name="invite" type="text" autoComplete="off" required maxLength={100} dir="ltr" error={error === 'bad_invite' ? t('auth.badInvite') : undefined} />}
       <Field label={t('auth.name')} name="name" type="text" autoComplete="given-name" maxLength={60} />
       <Field label={t('auth.email')} name="email" type="email" autoComplete="email" inputMode="email" required dir="ltr" />
       <Field
@@ -73,7 +75,7 @@ export default function SignupForm({ locale }: { locale: Locale }) {
         dir="ltr"
         error={error === 'mismatch' ? t('auth.passwordMismatch') : undefined}
       />
-      {error && error !== 'too_short' && error !== 'mismatch' && (
+      {error && error !== 'too_short' && error !== 'mismatch' && error !== 'bad_invite' && (
         <p role="alert" className="rounded-2xl bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
           {t(MESSAGES[error])}
           {error === 'closed' && (

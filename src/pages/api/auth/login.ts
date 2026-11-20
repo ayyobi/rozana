@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { ClientResponseError } from 'pocketbase';
-import { writeAuthCookie } from '@/lib/pocketbase/server';
+import { secureCookies, writeAuthCookie } from '@/lib/pocketbase/server';
 import { rateLimit } from '@/lib/auth/rate-limit';
 
 const schema = z.object({
@@ -13,7 +13,7 @@ function json(body: unknown, status: number) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 }
 
-export const POST: APIRoute = async ({ request, locals, cookies, clientAddress }) => {
+export const POST: APIRoute = async ({ request, locals, cookies, clientAddress, url }) => {
   if (!rateLimit(`login:${clientAddress}`, 8, 10 * 60 * 1000)) {
     return json({ error: 'too_many' }, 429);
   }
@@ -37,6 +37,6 @@ export const POST: APIRoute = async ({ request, locals, cookies, clientAddress }
     return json({ error: 'invalid' }, 401);
   }
 
-  writeAuthCookie(pb, cookies, import.meta.env.PROD);
+  writeAuthCookie(pb, cookies, secureCookies(url));
   return json({ ok: true }, 200);
 };
